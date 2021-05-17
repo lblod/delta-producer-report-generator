@@ -1,0 +1,19 @@
+{
+  "name": "delta-producer-report-generator",
+  "version": "0.1.0",
+  "description": "Service that generates reports or warning emails about deltas.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lblod/delta-producer-report-generator.git"
+  },
+  "author": "lblod",
+  "license": "MIT",
+  "dependencies": {
+    "@lblod/mu-auth-sudo": "^0.2.0",
+    "lodash.flatten": "^4.4.0"
+  }
+}
