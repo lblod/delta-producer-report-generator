@@ -39,7 +39,7 @@ An example of the `config.json` file:
 This service works by receiving deltas from the [delta-notifier](https://github.com/mu-semtech/delta-notifier).
 It should be configured as such :
 
-```json
+```js
   {
     match: {
       predicate: {
