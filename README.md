@@ -113,6 +113,7 @@ Provided [environment variables](https://docs.docker.com/compose/environment-var
 | ------------------- | ---------------------------------------- | ------------------------------- |
 | `EMAIL_FROM`        | Email address from which emails are sent |                                 |
 | `EMAIL_TO`          | Email address to which emails are sent   |                                 |
+| `OUTBOX`          | Outbox URI (for deliver-email-service)   |                                 |
 
 ## Development
 
