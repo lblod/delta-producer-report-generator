@@ -9,11 +9,11 @@ import {
   FAILED_JOB_EMAIL_CONTENT,
   REPORT_TASK_EMAIL_SUBJECT,
   REPORT_TASK_EMAIL_CONTENT,
-  TYPE_PREFIX,
+  TYPE_PREDICATE,
   ERROR_TYPE,
-  STATUS_PREFIX,
+  STATUS_PREDICATE,
   STATUS_FAILED,
-  TASK_OPERATION_PREFIX,
+  TASK_OPERATION_PREDICATE,
   REPORT_GENERATION_TASK_OPERATION
 } from './lib/constants';
 import {
@@ -33,9 +33,9 @@ app.post('/delta', async function( req, res ) {
   const delta = req.body;
   const inserts = flatten(delta.map(changeSet => changeSet.inserts));
 
-  const error = filterSubjectInTriples(inserts, TYPE_PREFIX, ERROR_TYPE);
-  const failedJob = filterSubjectInTriples(inserts, STATUS_PREFIX, STATUS_FAILED);
-  const reportGenerationTask = filterSubjectInTriples(inserts, TASK_OPERATION_PREFIX, REPORT_GENERATION_TASK_OPERATION);
+  const error = filterSubjectInTriples(inserts, TYPE_PREDICATE, ERROR_TYPE);
+  const failedJob = filterSubjectInTriples(inserts, STATUS_PREDICATE, STATUS_FAILED);
+  const reportGenerationTask = filterSubjectInTriples(inserts, TASK_OPERATION_PREDICATE, REPORT_GENERATION_TASK_OPERATION);
 
   if (error) {
     const message = await getMessage(error);
