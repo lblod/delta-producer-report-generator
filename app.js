@@ -23,7 +23,7 @@ import {
   createWarningEmail
 } from './lib/queries';
 
-app.use(bodyParser.json({ type: function(req) { return /^application\/json/.test( req.get('content-type') ); } }))
+app.use(bodyParser.json({ type: function(req) { return /^application\/json/.test( req.get('content-type') ); } }));
 
 app.get('/', function( req, res ) {
   res.send('Hello from delta-producer-report-generator :)');
@@ -80,6 +80,6 @@ function filterSubjectInTriples(triples, predicate, object) {
       && triple.object.type == 'uri'
       && triple.object.value == object;
   }).map(triple => triple.subject.value);
-  
+
   return subjects.length ? subjects[0] : null;  // assume max one per deltas
 }
