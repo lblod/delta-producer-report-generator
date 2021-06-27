@@ -15,6 +15,8 @@ services:
     environment:
       EMAIL_FROM: "hello@from.com"
       EMAIL_TO: "hello@to.com"
+      OUTBOX: "http://a/uri"
+      APP_NAME: "An app name"
     volumes:
       - ./config/delta/report-generator:/config
 ```
@@ -89,6 +91,7 @@ Provided [environment variables](https://docs.docker.com/compose/environment-var
 | `EMAIL_FROM`        | Email address from which emails are sent |                                 |
 | `EMAIL_TO`          | Email address to which emails are sent   |                                 |
 | `OUTBOX`          | Outbox URI (for deliver-email-service)   |                                 |
+| `APP_NAME` | The name of the app, to help differentiating emails |                                 |
 
 ## Development
 
