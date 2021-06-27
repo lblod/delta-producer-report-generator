@@ -1,6 +1,6 @@
 {
   "name": "delta-producer-report-generator",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Service that generates reports or warning emails about deltas.",
   "main": "app.js",
   "scripts": {
