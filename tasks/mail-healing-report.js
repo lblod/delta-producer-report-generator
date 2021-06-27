@@ -14,6 +14,8 @@ import {
   REPORT_GENERATION_TASK_OPERATION
 } from '../lib/constants';
 
+import { APP_NAME } from '../lib/env';
+
 export async function run(triples){
   const reportGenerationTasks = filterSubjectInTriples(triples, STATUS_PREDICATE, STATUS_SCHEDULED);
   for(const taskSubject of reportGenerationTasks){
@@ -63,7 +65,7 @@ async function hasInputContainerReport(containerUri){
 
 function generateEmailContent(taskUri, jobOperationUri) {
   return {
-    subject: `Delta healing report for ${jobOperationUri}`,
+    subject: `Delta healing report for ${jobOperationUri} in ${APP_NAME}`,
     text: `
       Hello,
 

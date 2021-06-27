@@ -3,6 +3,7 @@ import { createWarningEmail } from '../lib/queries';
 import { STATUS_PREDICATE, STATUS_FAILED } from '../lib/constants';
 import { loadJob } from '../lib/job';
 import jsonConfig from '/config/config.json';
+import { APP_NAME } from '../lib/env';
 
 //Job controller doesn't inform us on failed jobs, hence custom code here.
 export async function run(triples){
@@ -18,7 +19,7 @@ export async function run(triples){
 
 function generateEmailContent(jobUri, jobOperation) {
   return {
-    subject: `Job in the delta-producer process ${jobOperation} failed`,
+    subject: `Job in the delta-producer process ${jobOperation} failed in ${APP_NAME}`,
     text: `
       Hello,
 

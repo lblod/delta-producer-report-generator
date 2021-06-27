@@ -1,6 +1,7 @@
 import { filterSubjectInTriples } from '../lib/utils';
 import { createWarningEmail, getErrorMessage } from '../lib/queries';
 import { TYPE_PREDICATE, ERROR_TYPE } from '../lib/constants';
+import { APP_NAME } from '../lib/env';
 
 //The errors may occur at random moments in the process. They (currently) don't fit in the task model
 export async function run(triples){
@@ -14,7 +15,7 @@ export async function run(triples){
 
 function generateEmailContent(uri, message) {
   return {
-    subject: `An error occured in the delta-producer process`,
+    subject: `An error occured in the delta-producer process in ${APP_NAME}`,
     text: `
       Hello,
 
