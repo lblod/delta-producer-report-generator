@@ -1,6 +1,7 @@
 import { app, errorHandler } from 'mu';
 import flatten from 'lodash.flatten';
 import bodyParser from 'body-parser';
+import sendErrorAlert from './lib/send-error-alert';
 import { run as mailHealingReport } from './tasks/mail-healing-report';
 import { run as mailOnError } from './tasks/mail-on-error';
 import { run as mailOnFailedJob } from './tasks/mail-on-failed-job';
@@ -19,12 +20,20 @@ app.post('/delta', async function(req, res) {
   const delta = req.body;
   const inserts = flatten(delta.map(changeSet => changeSet.inserts));
   if (inserts.length) {
-    for (const run of [mailHealingReport, mailOnError, mailOnFailedJob]) {
+    for (const {label, task} of [
+      {label: 'Healing Report', task: mailHealingReport},
+      {label: 'Error Report', task: mailOnError},
+      {label: 'Failed Job Report', task: mailOnFailedJob}]) {
       try {
-        await run(inserts);
+        await task(inserts);
       } catch (error) {
-        console.error(`There was an error processing ${inserts.join('\n')}`);
-        console.error(error);
+        sendErrorAlert({
+          message: `Something unexpected went wrong while processing task [${label}].`,
+          detail: JSON.stringify({
+            error,
+            inserts
+          }, undefined, 2)
+        });
       }
     }
   } else {
