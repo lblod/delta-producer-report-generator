@@ -19,7 +19,13 @@ app.get('/', function(_, res) {
 app.post('/delta', async function(req, res) {
   const delta = req.body;
   const inserts = flatten(delta.map(changeSet => changeSet.inserts));
-  if (inserts.length) {
+
+  if (!inserts.length) {
+    console.log('Incoming deltas do not contain anything to be reported, skipping...');
+    return res.status(204).send();
+  }
+
+  const process = async (inserts) => {
     for (const {label, task} of [
       {label: 'Healing Report', task: mailHealingReport},
       {label: 'Error Report', task: mailOnError},
@@ -30,16 +36,22 @@ app.post('/delta', async function(req, res) {
         sendErrorAlert({
           message: `Something unexpected went wrong while processing task [${label}].`,
           detail: JSON.stringify({
-            error,
+            error: {
+              message: error.message,
+              stack: error.stack
+            },
             inserts
           }, undefined, 2)
         });
       }
     }
-  } else {
-    console.log('Incoming deltas do not contain anything to be reported, skipping.');
-    res.status(204).send();
-  }
+  };
+
+  // NOTE: to prevent missing delta's, we do not await the processing of the previous batch.
+  process(inserts);
+
+  console.log('Started processing delta, awaiting the next batch!');
+  return res.status(204).send();
 });
 
 app.use(errorHandler);

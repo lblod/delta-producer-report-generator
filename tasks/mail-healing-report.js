@@ -24,7 +24,7 @@ export async function run(triples) {
       try {
         await processReportTask(task);
       } catch (error) {
-        console.error(`Error processing task: ${taskSubject}`);
+        console.error(`Error processing Healing Report: ${taskSubject}`);
         console.error(error);
         await updateTaskStatus(task, STATUS_FAILED);
       }
