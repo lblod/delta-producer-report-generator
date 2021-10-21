@@ -32,17 +32,18 @@ app.post('/delta', async function(req, res) {
       {label: 'Failed Job Report', task: mailOnFailedJob}]) {
       try {
         await task(inserts);
-      } catch (error) {
+      }
+      catch (error) {
         sendErrorAlert({
           message: `Something unexpected went wrong while processing task [${label}].`,
           detail: JSON.stringify({
             error: {
-              message: error.message,
-              stack: error.stack
-            },
-            inserts
+              message: error.message
+            }
           }, undefined, 2)
         });
+        console.error(`Caught error ${error.message || error}`);
+        console.error(`With data: ${JSON.stringify(inserts)}`);
       }
     }
   };
