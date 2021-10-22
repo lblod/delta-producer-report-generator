@@ -1,5 +1,5 @@
 import { filterSubjectInTriples } from '../lib/utils';
-import { isTask, updateTaskStatus, loadTask } from '../lib/task';
+import { updateTaskStatus, loadTask } from '../lib/task';
 import { loadJob } from '../lib/job';
 import { sparqlEscapeUri } from 'mu';
 import { querySudo as query } from '@lblod/mu-auth-sudo';
@@ -16,43 +16,40 @@ import {
 
 import { APP_NAME } from '../lib/env';
 
-export async function run(triples){
+export async function run(triples) {
   const reportGenerationTasks = filterSubjectInTriples(triples, STATUS_PREDICATE, STATUS_SCHEDULED);
-  for(const taskSubject of reportGenerationTasks){
-    if(await isTask(taskSubject)){
-      await processReportTask(taskSubject);
-    }
-  }
-}
-
-async function processReportTask(taskSubject){
-  const task = await loadTask(taskSubject);
-
-  if(task.operation == REPORT_GENERATION_TASK_OPERATION){
-    try {
-      await updateTaskStatus(task, STATUS_BUSY);
-
-      for(const container of task.inputContainers){
-        const hasReport = await hasInputContainerReport(container);
-        if(hasReport){
-          const job = await loadJob(task.job);
-          const emailContent = generateEmailContent(task.task, job.operation);
-          await createWarningEmail(emailContent.subject, emailContent);
-        }
+  for (const taskSubject of reportGenerationTasks) {
+    const task = await loadTask(taskSubject);
+    if (task) {
+      try {
+        await processReportTask(task);
+      } catch (error) {
+        console.error(`Error processing Healing Report: ${taskSubject}`);
+        console.error(error);
+        await updateTaskStatus(task, STATUS_FAILED);
       }
-
-      await updateTaskStatus(task, STATUS_SUCCESS);
-
-    }
-    catch(error){
-      console.error(`Error processing task: ${taskSubject}`);
-      console.error(error);
-      await updateTaskStatus(task, STATUS_FAILED);
     }
   }
 }
 
-async function hasInputContainerReport(containerUri){
+async function processReportTask(task) {
+  if (task.operation === REPORT_GENERATION_TASK_OPERATION) {
+    await updateTaskStatus(task, STATUS_BUSY);
+    for (const container of task.inputContainers) {
+      const hasReport = await hasInputContainerReport(container);
+      if (hasReport) {
+        const job = await loadJob(task.job);
+        if (!job)
+          throw `Couldn't find a or destruct Job for Task: <${task.task}>`;
+        const emailContent = generateEmailContent(task.task, job.operation);
+        await createWarningEmail(emailContent.subject, emailContent);
+      }
+    }
+    await updateTaskStatus(task, STATUS_SUCCESS);
+  }
+}
+
+async function hasInputContainerReport(containerUri) {
   const queryStr = `
      ${PREFIXES}
      ASK {
